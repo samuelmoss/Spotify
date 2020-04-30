@@ -34,9 +34,31 @@ class SpotifyETL:
                                                 self.redirect_uri)
         try:
             if self.token:
-                sp = spotipy.Spotify(auth=self.token)
+                self.sp = spotipy.Spotify(auth=self.token)
         except Exception as e:
             logger.error(traceback.format_exc())
             print(e.args)
 
+    def get_recent_songs(self):
+        """
+        Method to retrieve 50 most recent played songs
+        """
 
+        try:
+            recent_songs_method = self.sp.current_user_recently_played()
+            songs = recent_songs_method['items']
+        except Exception as e:
+            logger.error(traceback.format_exc())
+            print(e.args)
+        return songs
+
+    def create_track_table(self):
+        """
+        Method to create table for track-specific data
+        """
+        songs = self.get_recent_songs()
+        ids = []
+        names = []
+        # TODO - define empty lists for vaiables in track entity
+        # TODO - figure out if track_info needs to be in a different class
+        # TODO - check track analysis
