@@ -17,6 +17,8 @@
 .cache
 pycache
 pyc
+poc
+
 # Generated files
 .idea/**/contentModel.xml
 
