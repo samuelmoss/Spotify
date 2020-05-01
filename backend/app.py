@@ -2,6 +2,9 @@ from SpotifyETL import SpotifyETL
 import datetime
 import time
 import logging
+import sqlalchemy
+import pyodbc
+import config
 
 date_stage = datetime.datetime.today()
 current_date = date_stage.strftime('%m-%d-%Y')
@@ -53,6 +56,17 @@ print('Storing Entities as CSVs')
 track_entity.to_csv(f'./output/tracks {current_date}.csv')
 artist_entity.to_csv(f'./output/artists {current_date}.csv')
 album_entity.to_csv(f'./output/albums {current_date}.csv')
+
+
+#establishing SQL Server Engine to Azure DB
+engine = config.engine
+
+
+# write the DataFrame to a table in the sql database
+print('Writing DataFrames to Azure DB Tables')
+track_entity.to_sql("tracks", schema='dbo', if_exists='append', con=engine)
+artist_entity.to_sql("artists", schema='dbo', if_exists='append', con=engine)
+album_entity.to_sql("albums", schema='dbo', if_exists='append', con=engine)
 
 end_time = time.time()
 

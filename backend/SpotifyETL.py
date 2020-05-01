@@ -157,9 +157,10 @@ class SpotifyETL:
                                             'album_name', 'track_popularity', 'track_duration',
                                             'datetime_played', 'explicit'])
 
-            audio_df = pd.DataFrame(audio_features, columns=['track_id', 'danceability', 'energy', 'key', 'loudness',
-                                                         'mode', 'speechiness', 'acousticness', 'liveness', 'valence',
-                                                         'tempo', 'uri'])
+            audio_df = pd.DataFrame(audio_features,
+                                    columns=['track_id', 'danceability', 'energy', 'song_key', 'loudness',
+                                             'mode', 'speechiness', 'acousticness', 'liveness', 'valence',
+                                             'tempo', 'uri'])
 
             track_entity = pd.merge(info_df, audio_df, how='inner')
             track_entity['date_played'] = [datetime.datetime.strptime(date_time_str, '%Y-%m-%dT%H:%M:%S.%fZ') for
@@ -173,6 +174,9 @@ class SpotifyETL:
             track_entity['time_played'] = [d.astimezone(timezone('US/Central')) for d in track_entity['time_played']]
             track_entity['time_played'] = [d.time() for d in track_entity['time_played']]
             track_entity['track_duration'] = track_entity['track_duration'] / 1000
+
+            track_entity = track_entity.drop_duplicates()
+            track_entity = track_entity.set_index('track_id')
 
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -233,6 +237,7 @@ class SpotifyETL:
                                      columns=['artist_id', 'artist_name', 'artist_popularity', 'artist_followers',
                                               'artist_image', 'artist_genres'])
 
+            artist_df = artist_df.set_index('artist_id')
         except Exception as e:
             logger.error(traceback.format_exc())
             print(e.args)
@@ -391,6 +396,8 @@ class SpotifyETL:
                                     columns=['album_id', 'album_name', 'album_popularity', 'album_tracks',
                                              'album_image', 'album_release_date', 'album_label', 'album_artist_id',
                                              'album_artist_name'])
+
+            album_df = album_df.set_index('album_id')
 
         except Exception as e:
             logger.error(traceback.format_exc())
