@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter('	%(asctime)s - %(name)s - %(message)s')
 
-file_handler = logging.FileHandler(f'./logs/{current_date} SpotifyETL.py')
+file_handler = logging.FileHandler(f'./logs/{current_date} SpotifyETL.log')
 file_handler.setFormatter(formatter)
 
 logger.addHandler(file_handler)
@@ -218,7 +218,10 @@ class SpotifyETL:
                 popularities.append(artists[i]['popularity'])
                 followers.append(artists[i]['followers']['total'])
                 image.append(artists[i]['images'][1]['url'])
-                genres.append(artists[i]['genres'])
+                try:
+                    genres.append(artists[i]['genres'])
+                except IndexError:
+                    genres.append('Null')
 
             artist_info_cols = list(
                 zip(artist_ids, names, popularities, followers, image, genres))
@@ -237,6 +240,7 @@ class SpotifyETL:
                                      columns=['artist_id', 'artist_name', 'artist_popularity', 'artist_followers',
                                               'artist_image', 'artist_genres'])
 
+            artist_df = artist_df.explode('artist_genres')
             artist_df = artist_df.set_index('artist_id')
         except Exception as e:
             logger.error(traceback.format_exc())
@@ -404,3 +408,20 @@ class SpotifyETL:
             print(e.args)
 
         return album_df
+
+
+def clean_entities(sql_file, index):
+
+    try:
+        engine = config.engine
+        sql = open(f'{sql_file}', 'r')
+        index = index
+        df = pd.read_sql(sql.read(), engine)
+        df = df.drop_duplicates()
+        df = df.set_index(index)
+
+    except Exception as e:
+        logger.error(traceback.format_exc())
+        print(e.args)
+
+    return df

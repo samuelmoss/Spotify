@@ -1,4 +1,4 @@
-from SpotifyETL import SpotifyETL
+from SpotifyETL import SpotifyETL, clean_entities
 import datetime
 import time
 import logging
@@ -67,6 +67,19 @@ print('Writing DataFrames to Azure DB Tables')
 track_entity.to_sql("tracks", schema='dbo', if_exists='append', con=engine)
 artist_entity.to_sql("artists", schema='dbo', if_exists='append', con=engine)
 album_entity.to_sql("albums", schema='dbo', if_exists='append', con=engine)
+
+print('Cleaning Album and Artist Tables')
+clean_tracks_df = clean_entities('tracks.sql', 'track_id')
+clean_artist_df = clean_entities('artists.sql', 'artist_id')
+clean_album_df = clean_entities('albums.sql', 'album_id')
+track_data_types = {'track_id': sqlalchemy.types.VARCHAR(50)}
+artist_data_types = {'artist_id': sqlalchemy.types.VARCHAR(50)}
+album_data_types = {'album_id': sqlalchemy.types.VARCHAR(50)}
+clean_tracks_df.to_sql("tracks", schema='dbo', if_exists='replace', dtype=track_data_types, con=engine)
+clean_artist_df.to_sql("artists", schema='dbo', if_exists='replace', dtype=artist_data_types, con=engine)
+clean_album_df.to_sql("albums", schema='dbo', if_exists='replace', dtype=album_data_types, con=engine)
+print('Azure DB Tables Populated')
+
 
 end_time = time.time()
 
