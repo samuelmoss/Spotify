@@ -18,6 +18,10 @@
 pycache
 pyc
 poc
+.csv
+.bat
+cache
+.log
 
 # Generated files
 .idea/**/contentModel.xml
