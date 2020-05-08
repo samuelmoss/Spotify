@@ -105,3 +105,18 @@ config.py
 .ipynb
 
 # End of https://www.gitignore.io/api/pycharm
+backend/.cache-1257458577
+backend/.cache-samuelmoss
+backend/__pycache__/config.cpython-37.pyc
+backend/__pycache__/SpotifyETL.cpython-37.pyc
+backend/logs/05-01-2020 app.log
+backend/logs/05-06-2020 app.log
+backend/logs/05-06-2020 SpotifyETL.log
+backend/logs/05-07-2020 app.log
+*.log
+*.csv
+*.csv
+backend/output/albums 05-01-2020.csv
+backend/output/albums 05-01-2020.csv
+*.bat
+backend/output/tracks 05-01-2020.csv
