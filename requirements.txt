@@ -1,0 +1,5 @@
+spotipy==2.12.0
+pytz==2020.1
+pandas==1.0.3
+sqlaclhemy==1.3.16
+pyodbc==4.0.30
